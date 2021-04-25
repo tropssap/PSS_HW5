@@ -50,6 +50,8 @@ void PassengerGateway::createOrder(Passenger passenger, string from, string to, 
 
     }
     back.createOrder(passenger,from,to,carType);
+
+    passenger1=back.logInPassenger(passenger);
     cout<<passenger1.getName()<<" price for this ride: "<<passenger1.proposedOrder.back().price<<endl;
 }
 

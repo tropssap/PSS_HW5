@@ -20,6 +20,7 @@ BackEnd::BackEnd() {
 
 
 vector<Order> BackEnd::readActiveOrders() {
+
     ifstream fin("orders.txt");
     int n;
     fin >> n;
@@ -126,7 +127,7 @@ void BackEnd::validationPassengers() {
 }
 
 void BackEnd::validationDrivers() {
-
+    validDrivers.clear();
     ifstream fin("drivers.txt");
     int numberOfUsers;
     fin >> numberOfUsers;
@@ -163,14 +164,25 @@ void BackEnd::validationDrivers() {
         for(int j=0;j<carsNumber;j++){
         fin >> model >> type >> color >> number;
         Car car(model, number, color, type, "0");
-        driver.cars.push_back(car);}
+        driver.cars.push_back(car);
+        }
         fin>>driver.status;
         string from, to;
-        int time,dId;
+        int time,pId;
         double price;
-        fin>>from>>to>>type>>price>>time>>dId;
-        Order pr(id,dId,from,to,type,price,time);
+        fin>>from>>to>>type>>price>>time>>pId;
+        Order pr(pId,id,from,to,type,price,time);
         driver.activeOrder.push_back(pr);
+        int numberOfProposedOrders;
+        fin>>numberOfProposedOrders;
+        for (int j = 0; j < numberOfProposedOrders; j++) {
+            string from, to;
+            double price;
+            int time, type, pId;
+            fin >> from >> to >> type >> price >> time >> pId;
+            Order order(pId, id, from, to, type, price, time);
+            driver.proposedOrders.push_back(order);
+        }
 
         validDrivers.push_back(driver);
     }
@@ -250,26 +262,24 @@ int BackEnd::logInAdmini(Admin passenger) {
 }
 
 void BackEnd::acceptRideByPassenger(Passenger passenger) {
-
+    validationPassengers();
     if(logInPassenger(passenger).isBlocked)
         throw blockError("Passenger blocked");
-    validationPassengers();
     int i = logInPassengeri(passenger);
-   // activeOrders.pop_back();
+   activeOrders= readActiveOrders();
     activeOrders.push_back(validPassengers.at(i).proposedOrder.back());
-    validPassengers.at(i).active = true;
+    //validPassengers.at(i).active = true;
     validPassengers.at(i).propose= false;
     validPassengers.at(i).activeOrder.at(0)=validPassengers.at(i).proposedOrder.back();
     writeActiveOrders(activeOrders);
-
     writePassengersFiles(validPassengers);
 }
 
 void BackEnd::createOrder(Passenger passenger, string from, string to, int carType) {
+    validationPassengers();
     if(logInPassenger(passenger).isBlocked)
         throw blockError("Passenger blocked");
 
-    validationPassengers();
     int time = (rand() % 120 + 22);
     double price = (rand() % 10 + 2) * 0.3 * carType * time;
     int i = logInPassengeri(passenger);
@@ -285,21 +295,28 @@ void BackEnd::acceptRideByDriver(Driver driver, int numberForAccept) {
     if(logInDriver(driver).isBlocked)
         throw blockError("Driver blocked");
     validationPassengers();
-    readActiveOrders();
+  activeOrders=  readActiveOrders();
     int k = logInDriveri(driver);
+
+    if(numberForAccept>=validDrivers[k].proposedOrders.size())
+        return;
     validDrivers[k].setStatus(1);
-    validDrivers[k].activeOrder.push_back(validDrivers[k].proposedOrders[numberForAccept]);
+    validDrivers[k].activeOrder.clear();
+    validDrivers[k].activeOrder.push_back(validDrivers[k].proposedOrders.at(numberForAccept));
 
     validDrivers[k].activeOrder.back().DriverID = validDrivers[k].id;
-    for (int i = 0; i < validDrivers[k].proposedOrders.size(); i++) {
-        validDrivers[k].proposedOrders.pop_back();
-    }
+    for (int i = 0; i < validPassengers.size(); i++)
+        if (validPassengers[i].id == validDrivers[k].activeOrder.back().PassengerID)
+            validPassengers[i].active= true;
+
     for(int j=0;j<activeOrders.size();j++){
-        if(activeOrders.at(j).print()==validDrivers[k].proposedOrders[numberForAccept].print()){
+        if(activeOrders.at(j).print()==validDrivers[k].proposedOrders.at(numberForAccept).print()){
             activeOrders.at(j)=activeOrders.back();
             activeOrders.pop_back();
         }
     }
+
+    validDrivers[k].proposedOrders.clear();
     writeActiveOrders(activeOrders);
     writePassengersFiles(validPassengers);
     writeDriversFiles(validDrivers);
@@ -318,7 +335,7 @@ void BackEnd::endOrder(Driver driver) {
         }
     }
 
-    validDrivers[k].activeOrder.pop_back();
+//    validDrivers[k].activeOrder.pop_back();
     writePassengersFiles(validPassengers);
     writeDriversFiles(validDrivers);
 }
@@ -330,12 +347,13 @@ void BackEnd::lookForOrders(Driver driver) {
         throw blockError("Driver blocked");
     activeOrders = readActiveOrders();
     int k = logInDriveri(driver);
+    validDrivers[k].proposedOrders.clear();
     for (int i = 0; i < activeOrders.size(); i++) {
         if (validDrivers[k].cars.at(validDrivers[k].chosenCar).carType >= activeOrders.at(i).type) {
             validDrivers[k].proposedOrders.push_back(activeOrders.at(i));
         }
     }
-
+    writeDriversFiles(validDrivers);
 }
 
 vector<string> BackEnd::lookForPayments(Passenger passenger){
@@ -411,7 +429,7 @@ void BackEnd::writeDriversFiles(vector<Driver> passengers) {
         fout<<p.name<<endl<<p.rating<<endl<<p.orderHistory.size()<<endl;
         for(int j=0;j<p.orderHistory.size();j++){
             Order o=p.orderHistory.at(j);
-            fout<<o.from<<" "<<o.to<<" "<<o.type<<" "<<o.price<<" "<<o.time<<" "<<o.DriverID<<endl;
+            fout<<o.from<<" "<<o.to<<" "<<o.type<<" "<<o.price<<" "<<o.time<<" "<<o.PassengerID<<endl;
         }
 
         fout<<p.cars.size()<<" "<< p.chosenCar<<endl;
@@ -420,7 +438,12 @@ void BackEnd::writeDriversFiles(vector<Driver> passengers) {
 
         fout<<p.status<<endl;
         Order ac=p.activeOrder.back();
-        fout<<ac.from<<" "<<ac.to<<" "<<ac.type<<" "<<ac.price<<" "<<ac.time<<" "<<ac.DriverID<<endl;
+        fout<<ac.from<<" "<<ac.to<<" "<<ac.type<<" "<<ac.price<<" "<<ac.time<<" "<<ac.PassengerID<<endl;
+        fout<<p.proposedOrders.size()<<endl;
+        for(int j=0;j<p.proposedOrders.size();j++){
+            Order o=p.proposedOrders.at(j);
+            fout<<o.from<<" "<<o.to<<" "<<o.type<<" "<<o.price<<" "<<o.time<<" "<<o.PassengerID<<endl;
+        }
         fout<<endl;
     }
     fout.close();
@@ -440,6 +463,7 @@ void BackEnd::writeAdminFiles(vector<Admin> admins){
 }
 
 void BackEnd::blockPassenger(Admin admin, int id){
+    validationPassengers();
     if(!logInAdminb(admin))
         return;
     for(int i=0;i<validPassengers.size();i++){
@@ -449,6 +473,7 @@ void BackEnd::blockPassenger(Admin admin, int id){
     writePassengersFiles(validPassengers);
 }
 void BackEnd::unBlockPassenger(Admin admin, int id){
+    validationPassengers();
     if(!logInAdminb(admin))
         return;
     for(int i=0;i<validPassengers.size();i++){
@@ -458,6 +483,7 @@ void BackEnd::unBlockPassenger(Admin admin, int id){
     writePassengersFiles(validPassengers);
 }
 void BackEnd::blockDriver(Admin admin, int id){
+    validationDrivers();
     if(!logInAdminb(admin))
         return;
     for(int i=0;i<validDrivers.size();i++){
@@ -467,6 +493,7 @@ void BackEnd::blockDriver(Admin admin, int id){
     writeDriversFiles(validDrivers);
 }
 void BackEnd::unBlockDriver(Admin admin, int id){
+    validationDrivers();
     if(!logInAdminb(admin))
         return;
     for(int i=0;i<validDrivers.size();i++){
@@ -476,8 +503,30 @@ void BackEnd::unBlockDriver(Admin admin, int id){
     writeDriversFiles(validDrivers);
 }
 
-void BackEnd::addCarDriver(Driver driver,Car car){
+vector<Passenger> BackEnd::seePassengers(Admin admin){
+    validationPassengers();
+    if(!logInAdminb(admin)){
+        vector<Passenger> p;
+        return p;}
+    return validPassengers;
+}
+vector<Driver> BackEnd::seeDrivers(Admin admin){
+    validationDrivers();
+    if(!logInAdminb(admin)){
+        vector<Driver> p;
+        return p;}
+    return validDrivers;
+}
+vector<Order> BackEnd::seeActiveOrders(Admin admin){
+    if(!logInAdminb(admin)){
+        vector<Order> p;
+        return p;}
 
+    activeOrders=  readActiveOrders();
+    return activeOrders;
+}
+
+void BackEnd::addCarDriver(Driver driver,Car car){
     readCarQueue();
     carQD.push_back(logInDriver(driver).id);
     carQueue.push_back(car);

@@ -90,6 +90,12 @@ public:
     void writeCarQueue();
 
     vector<string> seeCarsInQueue(Admin admin);
+
+    vector<Passenger> seePassengers(Admin admin);
+
+    vector<Driver> seeDrivers(Admin admin);
+
+    vector<Order> seeActiveOrders(Admin admin);
 };
 
 

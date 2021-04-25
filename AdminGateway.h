@@ -25,6 +25,12 @@ public:
     void validateCar(Admin admin, int numerInList);
 
     void lookForCarsInQueue(Admin admin);
+
+    void lookForAllPassengers(Admin admin);
+
+    void lookForAllActiveOrders(Admin admin);
+
+    void lookForAllDrivers(Admin admin);
 };
 
 

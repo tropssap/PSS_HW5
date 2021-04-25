@@ -59,3 +59,41 @@ void AdminGateway::lookForCarsInQueue(Admin admin){
         cout<<".   Number for validating: "<<i<<endl;
     }
 }
+
+void AdminGateway::lookForAllPassengers(Admin admin ){
+    if(!back.logInAdminb(admin)){
+        cout<<"Admin not logged in"<<endl;
+        return;
+    }
+    vector<Passenger> passengers=back.seePassengers(admin);
+    cout<<"Admin looking for all valid passengers:"<<endl;
+    for(int i=0;i<passengers.size();i++)
+        cout<<passengers.at(i).id<<" "<<passengers.at(i).getName()<<" "<<passengers.at(i).login<<endl;
+    cout<<endl;
+}
+void AdminGateway::lookForAllDrivers(Admin admin ){
+    if(!back.logInAdminb(admin)){
+        cout<<"Admin not logged in"<<endl;
+        return;
+    }
+    vector<Driver> drivers=back.seeDrivers(admin);
+    cout<<"Admin looking for all valid drivers:"<<endl;
+    for(int i=0;i<drivers.size();i++)
+        cout<<drivers.at(i).id<<" "<<drivers.at(i).getName()<<" "<<drivers.at(i).login<<endl;
+    cout<<endl;
+}
+void AdminGateway::lookForAllActiveOrders(Admin admin ){
+    if(!back.logInAdminb(admin)){
+        cout<<"Admin not logged in"<<endl;
+        return;
+    }
+    vector<Order> orders=back.seeActiveOrders(admin);
+    if(orders.empty()){
+        cout<<"There is no active orders"<<endl;
+        return;
+    }
+    cout<<"Admin looking for active orders:"<<endl;
+    for(int i=0;i<orders.size();i++)
+        cout<<orders.at(i).print()<<endl;
+    cout<<endl;
+}

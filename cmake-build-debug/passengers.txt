@@ -3,7 +3,7 @@
 tropssap qazwsx
 TestName
 4.85
-9
+13
 adress1 adress2 1 12.99 55 1001
 adress2 adress3 2 15.99 26 1001
 adress3 adress1 3 18.99 335 1001
@@ -13,6 +13,10 @@ add add2 1 27 30 1001
 add add2 1 36 30 1001
 add add2 1 108 120 1001
 add add2 1 402.6 122 1001
+from to 2 243.6 58 1001
+from to 2 156 26 1001
+from to 2 407.4 97 1001
+from to 1 333.6 139 1002
 2
 Cash
 1234*999
@@ -20,9 +24,9 @@ Cash
 address1
 address2
 0
-1
-from to 2 63.6 53 0
-from to 2 63.6 53 0
+0
+from to 1 333.6 139 0
+from to 1 333.6 139 0
 
 2 0
 tropssap2 qazwsx12
