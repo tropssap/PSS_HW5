@@ -11,7 +11,6 @@ using namespace std;
 
 class Car {
 public:
-//    static int carType;
 
     Car(Car *pCar);
 
@@ -63,51 +62,6 @@ public:
     string number;
     int color;
     string current_coordinates;
-};
-
-class EconomyCar: public Car {
-public:
-    EconomyCar(string model, string number, Colors color, string current_coordinates)
-            :Car(move(model), move(number), color, Car::Economy, move(current_coordinates)){}
-};
-
-class ComfortCar: public Car {
-public:
-    int freeBottleOfwater = 0;
-
-    ComfortCar(string model, string number, Colors color, string current_coordinates)
-            :Car(move(model), move(number), color, Car::Comfort, move(current_coordinates)){}
-
-    void BuyBottlesOfWater(int count) { freeBottleOfwater = freeBottleOfwater + count; }
-
-    bool takeBottleOfWater() {
-        if(freeBottleOfwater > 0) {
-            freeBottleOfwater--;
-            cout << "Driver give bottle of water to the passenger!" << endl;
-            return 1;
-        } else {
-            cout << "Bottles of water ran out!" << endl;
-            return 0;
-        }
-    }
-
-};
-
-
-class ComfortPlusCar: public Car {
-public:
-    ComfortPlusCar(string model, string number, Colors color, string current_coordinates)
-            :Car(move(model), move(number), color, Car::ComfortPlus, move(current_coordinates)){}
-};
-
-class BusinessCar: public Car {
-public:
-    BusinessCar(string model, string number, Colors color, string current_coordinates)
-            :Car(move(model), move(number), color, Car::Business, move(current_coordinates)){}
-
-    void parkRightInFrontOfTheEntrance() {
-
-    }
 };
 
 #endif
