@@ -15,7 +15,7 @@ bool PassengerGateway::LogIn(Passenger passenger) {
 void PassengerGateway::orderHistory(Passenger passenger1) {
 
     if(!LogIn(passenger1)){
-        cout<<"Passenger not logged in";
+        cout<<"Passenger not logged in"<<endl;
         return;
     }
     Passenger passenger=back.logInPassenger(passenger1);
@@ -35,7 +35,7 @@ void PassengerGateway::orderHistory(Passenger passenger1) {
 
 void PassengerGateway::createOrder(Passenger passenger, string from, string to, int carType){
     if(!LogIn(passenger)){
-        cout<<"Passenger not logged in";
+        cout<<"Passenger not logged in"<<endl;
         return;
     }
 
@@ -57,7 +57,7 @@ void PassengerGateway::createOrder(Passenger passenger, string from, string to, 
 
 void PassengerGateway::acceptRide(Passenger passenger, bool accept){
     if(!LogIn(passenger)){
-        cout<<"Passenger not logged in";
+        cout<<"Passenger not logged in"<<endl;
         return;
     }
 
@@ -73,7 +73,7 @@ void PassengerGateway::acceptRide(Passenger passenger, bool accept){
 
 void PassengerGateway::getCoordinates(Passenger passenger){
     if(!LogIn(passenger)){
-        cout<<"Passenger not logged in";
+        cout<<"Passenger not logged in"<<endl;
         return;
     }
     Passenger passenger1=back.logInPassenger(passenger);
@@ -87,7 +87,7 @@ void PassengerGateway::getCoordinates(Passenger passenger){
 
 void PassengerGateway::lookForPayment(Passenger passenger){
     if(!LogIn(passenger)){
-        cout<<"Passenger not logged in";
+        cout<<"Passenger not logged in"<<endl;
         return;
     }
     Passenger passenger1=back.logInPassenger(passenger);
@@ -100,7 +100,7 @@ void PassengerGateway::lookForPayment(Passenger passenger){
 
 void PassengerGateway::addPayment(Passenger passenger, string payment){
     if(!LogIn(passenger)){
-        cout<<"Passenger not logged in";
+        cout<<"Passenger not logged in"<<endl;
         return;
     }
     back.addPayment(passenger,payment);
@@ -108,7 +108,7 @@ void PassengerGateway::addPayment(Passenger passenger, string payment){
 }
 void PassengerGateway::lookForPinnedAddress(Passenger passenger){
     if(!LogIn(passenger)){
-        cout<<"Passenger not logged in";
+        cout<<"Passenger not logged in"<<endl;
         return;
     }
     Passenger passenger1=back.logInPassenger(passenger);
@@ -121,7 +121,7 @@ void PassengerGateway::lookForPinnedAddress(Passenger passenger){
 
 void PassengerGateway::addPinnedAddress(Passenger passenger, string address){
     if(!LogIn(passenger)){
-        cout<<"Passenger not logged in";
+        cout<<"Passenger not logged in"<<endl;
         return;
     }
     back.addPinnedAddress(passenger,address);

@@ -25,8 +25,6 @@ public:
 
     void lookForPayment(Passenger passenger);
 
-    void addPayment(Passenger passenger);
-
     void addPayment(Passenger passenger, string payment);
 
     void addPinnedAddress(Passenger passenger, string address);

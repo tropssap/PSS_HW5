@@ -12,6 +12,28 @@ bool DriverGateway::logIn(Driver passenger) {
     return back.logInDriverb(passenger);
 }
 
+
+void DriverGateway::orderHistory(Driver passenger1) {
+
+    if(!back.logInDriverb(passenger1)){
+        cout<<"Passenger not logged in"<<endl;
+        return;
+    }
+    Driver passenger=back.logInDriver(passenger1);
+    cout << "Getting order history..." << endl;
+    vector<Order> orderHistory =  passenger.orderHistory;
+    if (orderHistory.empty()) {
+        cout << "Order history is empty!" << endl;
+        return;
+    }
+
+    cout << "Order history of the " << passenger.getName() << " passenger:" << endl;
+    for(int i = 0; i < orderHistory.size(); i++) {
+        cout<<orderHistory[i].print()<<endl;
+    }
+}
+
+
 void DriverGateway::lookForOrders(Driver driver) {
     if(!logIn(driver)){
         cout<<"Driver not logged in"<<endl;

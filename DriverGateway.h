@@ -24,6 +24,8 @@ public:
     void endOrder(Driver driver);
 
     void addCar(Driver driver, Car car);
+
+    void orderHistory(Driver passenger1);
 };
 
 
